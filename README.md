@@ -4,6 +4,8 @@ Repositpry for a simple hand pose estimator combining Openpose and TTFNet.
 
 |Openpose Base|Handpose-estimator (This repository)|
 |---   |---     |
+|![](./demo/output/test_openpose.jpg)|![](./demo/output/test_handpose.jpg)|
+|---   |---     |
 |![](./demo/output/example_openpose.jpg)|![](./demo/output/example_handpose.jpg)|
 
 # setup  
