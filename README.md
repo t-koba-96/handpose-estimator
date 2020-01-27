@@ -1,11 +1,10 @@
 # Handpose-estimator　　
 
-Repositpry for a simple hand pose estimator combining Openpose and TTFNet. 
+Repositpry for a simple handpose estimator. Openpose based hand pose estimator searches the hand position based on the skeleton keypoints which starts from the persons head. This means when some keypoints of the upper body is occluded, estimating the handpose will be difficult(Second example). By using the TTFNet to estimate the hand position directly, it will be able to estimate handpose in occluded cases too. 
 
 |Openpose Base|Handpose-estimator (This repository)|
 |---   |---     |
 |![](./demo/output/test_openpose.jpg)|![](./demo/output/test_handpose.jpg)|
-|---   |---     |
 |![](./demo/output/example_openpose.jpg)|![](./demo/output/example_handpose.jpg)|
 
 # setup  

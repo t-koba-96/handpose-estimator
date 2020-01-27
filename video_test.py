@@ -23,7 +23,7 @@ def get_option():
     argparser.add_argument("--weight_file", type=str, help="specify the checkpoint_file", default="./weights/ttfnet/latest.pth")
     
     #rpn 
-    argparser.add_argument("--object_detection", type=str, help="true or not", default=True)
+    argparser.add_argument("--object_detection", type=str, help="ssd or off", default="off")
     argparser.add_argument("--ssd_weight_path", type=str, help="specify the weight_file", default='./weights/ssd/pretrained.pth')
 
     #openpose weight
@@ -36,10 +36,12 @@ def get_option():
 def main(webcamera = False):
     args = get_option()
 
-    if args.object_detection:
+    if args.object_detection == "ssd":
         rpn = ssd_setting.build_ssd('test', 300, 21) 
         rpn.load_weights(args.ssd_weight_path)
         from ssd.data import VOC_CLASSES as labels
+    else:
+        rpn = False
 
     #bounding box model
     model = init_detector(args.config_file, args.weight_file, device="cuda:0")
@@ -75,7 +77,8 @@ def main(webcamera = False):
                 # detect hand
                 hands_list = util.handDetect(candidate, subset, frame)
                 # detect object
-                detections , scale = detect_object.detect(rpn, frame)
+                if rpn:
+                    detections , scale = detect_object.detect(rpn, frame)
 
                 all_hand_peaks = []
                 for x, y, w, is_left in hands_list:
@@ -90,7 +93,8 @@ def main(webcamera = False):
             elif args.mode == "handpose":
                 bounding_box = inference_detector(model, frame)
                 # detect object
-                detections , scale = detect_object.detect(rpn, frame)
+                if rpn:
+                    detections , scale = detect_object.detect(rpn, frame)
 
 
                 all_hand_peaks = []
@@ -116,8 +120,8 @@ def main(webcamera = False):
                     peaks[:, 0] = np.where(peaks[:, 0]==0, peaks[:, 0], peaks[:, 0]+fixed_xmin)
                     peaks[:, 1] = np.where(peaks[:, 1]==0, peaks[:, 1], peaks[:, 1]+fixed_ymin)
                     all_hand_peaks.append(peaks)
-
-            canvas = detect_object.draw_ssd_bbox(canvas, detections, scale, labels)
+            if rpn:
+                canvas = detect_object.draw_ssd_bbox(canvas, detections, scale, labels)
             if all_hand_peaks:
                  canvas = util.draw_handpose(canvas, all_hand_peaks)
                  canvas = cv2.resize(canvas,(width, height))
